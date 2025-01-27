@@ -2,15 +2,144 @@
 
 # ckanext-dataset-series
 
-A fast and simple implementation of dataset series
+> [!WARNING]  
+> This is extension is a work in progress and may change at any point. Use with caution.
 
-WIP
+A fast and simple implementation of Dataset Series.
 
+Dataset Series are loosely defined as collections of datasets that share some common characteristics.
+These can be related to the nature of the data, scope, publishing process, etc. For instance:
+
+* Budget data release monthly or yearly
+* Data split by country / region
+* Data big in size split into smaller chunks
+* Geospatial data distributed in grids
+
+Dataset Series can be ordered or unordered.
+
+
+## How does it work?
+
+This extension uses a custom dataset type (`dataset-series`) to define the parent series entities. These are
+just datasets and can have any of the standard dataset fields defined.
+
+If the series is ordered, the only mandatory fields they need 
+are the following (shown in the [ckanext-scheming](https://github.com/ckan/ckanext-scheming) schema file definition):
+
+```yaml
+scheming_version: 2
+dataset_type: dataset-series
+
+dataset_fields:
+
+# [...]
+
+# Series fields
+
+# Empty for un-ordered series
+- field_name: series_order_field
+  label: Series order field
+
+- field_name: series_order_type
+  label: Series order type
+```
+
+At the dataset level, the series membership is defined with the `in_series` field. Datasets can belong to multiple series:
+
+```yaml
+scheming_version: 2
+dataset_type: dataset
+
+dataset_fields:
+
+# [...]
+
+# Series fields
+
+- field_name: in_series
+  label: In Series
+  preset: multiple_text
+```
+
+Once these are in place, datasets can be assigned to a series by setting the `in_series` field via the API or the UI form.
+
+## API
+
+If a dataset belongs to a series, a new `series_navigation` key is added to the response of the `package_show` action, showing details of the series it belongs to:
+
+```json
+{ 
+   "name": "test-dataset-in-series",
+   "type": "dataset",
+   "series_navigation": [
+      {
+          "id": "20f41df2-0b50-4b6b-9a75-44eb39411dca",
+          "name": "test-dataset-series",
+          "title": "Test Dataset series"
+      }
+  ]
+}
+```
+
+If that series is ordered, it will include links to the previous and next dataset on the series (or `None` if they don't exist):
+
+```json
+{ 
+   "name": "test-series-member-2",
+   "type": "dataset",
+   "series_navigation": [
+      {
+          "id": "20f41df2-0b50-4b6b-9a75-44eb39411dca",
+          "name": "test-dataset-series",
+          "next": {
+              "id": "ce8fb09a-f285-4ba8-952e-46dbde08c509",
+              "name": "test-series-member-3",
+              "title": "Test series member 3"
+          },
+          "previous": {
+              "id": "826bd499-40e5-4d92-bfa1-f777775f0d76",
+              "name": "test-series-member-1",
+              "title": "Test series member 1"
+          },
+          "title": "Test Dataset series"
+      }
+  ]
+}
+
+```
+
+Querying the series dataset will also return a `series_navigation` link if ordered, in this case linking to the first and last members:
+
+```json
+{
+   "name": "test-dataset-series",
+   "type": "dataset-series",
+   "series_navigation": {
+ 	  "first": {
+ 		  "id": "826bd499-40e5-4d92-bfa1-f777775f0d76",
+ 		  "name": "test-series-member-1",
+ 		  "title": "Test series member 1"
+ 	  },
+ 	  "last": {
+ 		  "id": "ce8fb09a-f285-4ba8-952e-46dbde08c509",
+ 		  "name": "test-series-member-3",
+ 		  "title": "Test series member 3"
+ 	  }
+   }
+}
+
+```
+
+## UI
+
+> [!NOTE]
+> TODO
+
+* Form snippet for `in_series` displaying available dataset series
+* Series navigation in dataset member pages linking to next and previous datasets
+* Series page showing a navigation of the member datasets
 
 ## Requirements
-
-**TODO:** For example, you might want to mention here which versions of CKAN this
-extension works with.
 
 If your extension works across different versions you can add the following table:
 
@@ -19,22 +148,11 @@ Compatibility with core CKAN versions:
 | CKAN version    | Compatible? |
 |-----------------|-------------|
 | 2.9             | not tested  |
-| 2.10            | not tested  |
-| 2.11            | not tested  |
-
-Suggested values:
-
-* "yes"
-* "not tested" - I can't think of a reason why it wouldn't work
-* "not yet" - there is an intention to get it working
-* "no"
+| 2.10            | yes         |
+| 2.11            | yes         |
 
 
 ## Installation
-
-**TODO:** Add any additional install steps to the list below.
-   For example installing any non-Python dependencies or adding any required
-   config settings.
 
 To install ckanext-dataset-series:
 
@@ -55,20 +173,7 @@ To install ckanext-dataset-series:
    config file (by default the config file is located at
    `/etc/ckan/default/ckan.ini`).
 
-4. Restart CKAN. For example if you've deployed CKAN with Apache on Ubuntu:
-   ```sh
-   sudo service apache2 reload
-   ```
-
-## Config settings
-
-None at present
-
-**TODO:** Document any optional config settings here. For example:
-
-	# The minimum number of hours to wait before re-checking a resource
-	# (optional, default: 24).
-	ckanext.dataset_series.some_setting = some_default_value
+4. Restart CKAN.
 
 
 ## Developer installation
@@ -87,43 +192,6 @@ To run the tests, do:
 
     pytest --ckan-ini=test.ini
 
-## Releasing a new version of ckanext-dataset-series
-
-If ckanext-dataset-series should be available on PyPI you can follow these steps to publish a new version:
-
-1. Update the version number in the `pyproject.toml` file. See [PEP 440](http://legacy.python.org/dev/peps/pep-0440/#public-version-identifiers) for how to choose version numbers.
-
-2. Make sure you have the latest version of necessary packages:
-   ```sh
-   pip install --upgrade build twine
-   ```
-
-3. Create a source and binary distributions of the new version:
-   ```sh
-   python -m build && twine check dist/*
-   ```
-
-   Fix any errors you get.
-
-4. Upload the source distribution to PyPI:
-   ```sh
-   twine upload dist/*
-   ```
-
-5. Commit any outstanding changes:
-   ```sh
-   git commit -a
-   git push
-   ```
-
-6. Tag the new release of the project on GitHub with the version number from
-   the `setup.py` file. For example if the version number in `setup.py` is
-   0.0.1 then do:
-
-   ```sh
-   git tag 0.0.1
-   git push --tags
-   ```
 
 ## License
 
