@@ -108,7 +108,6 @@ def _add_series_navigation(series_dict: dict) -> dict:
     if not series_dict.get("series_order_field"):
         return series_dict
 
-
     first, last = _get_series_first_and_last(
         series_dict["id"], series_dict["series_order_field"]
     )
