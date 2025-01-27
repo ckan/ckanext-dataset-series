@@ -1,0 +1,6 @@
+include README.rst
+include LICENSE
+include requirements.txt
+recursive-include ckanext/dataset_series *.html *.json *.js *.css *.mo *.yml *.yaml *.toml
+recursive-include ckanext/dataset_series/migration *.ini *.py *.mako
+recursive-include ckanext/dataset_series/public *.*

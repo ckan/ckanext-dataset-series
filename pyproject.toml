@@ -1,0 +1,39 @@
+[project]
+name = "ckanext-dataset-series"
+version = "0.0.1"
+description = "A fast and simple dataset series implementation for CKAN"
+readme = "README.md"
+authors = [
+    {name = "Adrià Mercader (amercader)"}
+]
+license = {text = "AGPL"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+keywords = [ "CKAN", "DCAT", "Dataset Series"]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/ckan/ckanext-dataset-series"
+
+[project.entry-points."ckan.plugins"]
+dataset_series = "ckanext.dataset_series.plugin:DatasetSeriesPlugin"
+
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+        "ignore::sqlalchemy.exc.SADeprecationWarning",
+        "ignore::sqlalchemy.exc.SAWarning",
+        "ignore::DeprecationWarning",
+]
+addopts = "--ckan-ini test.ini"
