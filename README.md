@@ -1,4 +1,4 @@
-[![Tests](https://github.com//ckanext-dataset-series/workflows/Tests/badge.svg)](https://github.com//ckanext-dataset-series/actions/workflows/test.yml)
+[![Tests](https://github.com/ckan/ckanext-dataset-series/workflows/Tests/badge.svg)](https://github.com//ckanext-dataset-series/actions)
 
 # ckanext-dataset-series
 
@@ -91,6 +91,7 @@ If that series is ordered, it will include links to the previous and next datase
       {
           "id": "20f41df2-0b50-4b6b-9a75-44eb39411dca",
           "name": "test-dataset-series",
+          "title": "Test Dataset series",
           "next": {
               "id": "ce8fb09a-f285-4ba8-952e-46dbde08c509",
               "name": "test-series-member-3",
@@ -100,8 +101,7 @@ If that series is ordered, it will include links to the previous and next datase
               "id": "826bd499-40e5-4d92-bfa1-f777775f0d76",
               "name": "test-series-member-1",
               "title": "Test series member 1"
-          },
-          "title": "Test Dataset series"
+          }
       }
   ]
 }
