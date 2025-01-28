@@ -108,39 +108,44 @@ def _add_series_navigation(series_dict: dict) -> dict:
     if not series_dict.get("series_order_field"):
         return series_dict
 
-    first, last = _get_series_first_and_last(
+    first, last, count = _get_series_first_last_and_count(
         series_dict["id"], series_dict["series_order_field"]
     )
-    if first and last:
-        series_dict["series_navigation"] = {
-            "first": {
-                "id": first["id"],
-                "name": first["name"],
-                "title": first["title"],
-            },
-            "last": {
-                "id": last["id"],
-                "name": last["name"],
-                "title": last["title"],
-            },
+
+    series_dict["series_navigation"] = {
+        "count": count,
+        "first": None,
+        "last": None,
+    }
+    if first:
+        series_dict["series_navigation"]["first"] = {
+            "id": first["id"],
+            "name": first["name"],
+            "title": first["title"],
+        }
+    if last:
+        series_dict["series_navigation"]["last"] = {
+            "id": last["id"],
+            "name": last["name"],
+            "title": last["title"],
         }
 
     return series_dict
 
 
-def _get_series_first_and_last(series_id, order_field):
+def _get_series_first_last_and_count(series_id, order_field):
     search_params = {"fq": f"vocab_in_series:{series_id}", "rows": 1}
     first_result = toolkit.get_action("package_search")(
         {}, dict(search_params, sort=f"{order_field} asc")
     )
 
     if not first_result["results"]:
-        return None, None
+        return None, None, 0
 
     if first_result["count"] == 1:
-        return first_result["results"][0], first_result["results"][0]
+        return first_result["results"][0], first_result["results"][0], 1
 
     last_result = toolkit.get_action("package_search")(
         {}, dict(search_params, sort=f"{order_field} desc")
     )
-    return first_result["results"][0], last_result["results"][0]
+    return first_result["results"][0], last_result["results"][0], last_result["count"]
