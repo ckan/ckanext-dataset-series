@@ -51,6 +51,8 @@ jobs:
         pip install -r requirements.txt
         pip install -r dev-requirements.txt
         pip install -e .
+        git clone https://github.com/ckan/ckanext-scheming
+        pip install -e ckanext-scheming
     - name: Setup extension
       # Extra initialization steps
       run: |
