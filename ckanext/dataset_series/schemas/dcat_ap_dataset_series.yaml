@@ -1,5 +1,5 @@
 scheming_version: 2
-dataset_type: dataset-series
+dataset_type: dataset_series
 about: A Dataset Series schema based on the DCAT AP v3 spec
 about_url: http://github.com/ckan/ckanext-dataset-series
 

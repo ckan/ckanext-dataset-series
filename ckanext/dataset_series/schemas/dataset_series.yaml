@@ -1,5 +1,5 @@
 scheming_version: 2
-dataset_type: dataset-series
+dataset_type: dataset_series
 about: A standard CKAN dataset schema with the Dataset Series fields
 about_url: http://github.com/ckan/ckanext-dataset-series
 

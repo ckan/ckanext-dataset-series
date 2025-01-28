@@ -20,7 +20,7 @@ Dataset Series can be ordered or unordered.
 
 ## How does it work?
 
-This extension uses a custom dataset type (`dataset-series`) to define the parent series entities. These are
+This extension uses a custom dataset type (`dataset_series`) to define the parent series entities. These are
 just datasets and can have any of the standard dataset fields defined.
 
 If the series is ordered, the only mandatory fields they need 
@@ -28,7 +28,7 @@ are the following (shown in the [ckanext-scheming](https://github.com/ckan/ckane
 
 ```yaml
 scheming_version: 2
-dataset_type: dataset-series
+dataset_type: dataset_series
 
 dataset_fields:
 
@@ -113,7 +113,7 @@ Querying the series dataset will also return a `series_navigation` link if order
 ```json
 {
    "name": "test-dataset-series",
-   "type": "dataset-series",
+   "type": "dataset_series",
    "series_navigation": {
  	  "first": {
  		  "id": "826bd499-40e5-4d92-bfa1-f777775f0d76",

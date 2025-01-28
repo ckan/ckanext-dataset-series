@@ -6,6 +6,8 @@ import ckan.plugins.toolkit as toolkit
 
 
 log = logging.getLogger(__name__)
+
+
 @toolkit.side_effect_free
 @toolkit.chained_action
 def package_show(up_func, context, data_dict):
@@ -17,7 +19,7 @@ def package_show(up_func, context, data_dict):
     )
 
     if not for_indexing:
-        if dataset_dict.get("type") == "dataset-series":
+        if dataset_dict.get("type") == "dataset_series":
             dataset_dict = _add_series_navigation(dataset_dict)
 
         elif dataset_dict.get("in_series"):

@@ -6,7 +6,7 @@ from ckan.tests.helpers import call_action, reset_db
 
 @pytest.fixture
 def series_fixtures():
-    dataset_series = factories.Dataset(type="dataset-series", series_order_field="name")
+    dataset_series = factories.Dataset(type="dataset_series", series_order_field="name")
 
     dataset1 = factories.Dataset(
         name="test-series-member-1", in_series=dataset_series["id"]
@@ -61,7 +61,7 @@ def test_series_navigation(series_fixtures):
 )
 def test_empty_series_navigation(series_fixtures):
 
-    dataset_series = factories.Dataset(type="dataset-series", series_order_field="name")
+    dataset_series = factories.Dataset(type="dataset_series", series_order_field="name")
     series_dict = call_action("package_show", id=dataset_series["id"])
 
     assert series_dict["series_navigation"]["count"] == 0
@@ -163,7 +163,7 @@ def test_series_last_dataset(series_fixtures):
 )
 def test_series_only_dataset():
 
-    dataset_series = factories.Dataset(type="dataset-series", series_order_field="name")
+    dataset_series = factories.Dataset(type="dataset_series", series_order_field="name")
 
     dataset_only = factories.Dataset(
         name="test-series-only-member", in_series=dataset_series["id"]
@@ -189,7 +189,7 @@ def test_series_only_dataset():
 def test_series_date_field():
 
     dataset_series = factories.Dataset(
-        type="dataset-series",
+        type="dataset_series",
         series_order_field="metadata_created",
         series_order_type="date",
     )
