@@ -1,6 +1,12 @@
+import logging
+
+from dateutil.parser import parse as parse_date, ParserError as DateParserError
+
 import ckan.plugins.toolkit as toolkit
 
 
+log = logging.getLogger(__name__)
+@toolkit.side_effect_free
 @toolkit.chained_action
 def package_show(up_func, context, data_dict):
 
@@ -30,10 +36,13 @@ def _add_series_member_navigation(dataset_dict: dict) -> dict:
             )
 
             if series_dict.get("series_order_field"):
+
+                is_date = series_dict.get("series_order_type", "").lower() == "date"
                 prev, next_ = _get_series_prev_and_next(
                     series_id,
                     series_dict["series_order_field"],
                     dataset_dict[series_dict["series_order_field"]],
+                    is_date=is_date,
                 )
                 if "series_navigation" not in dataset_dict:
                     dataset_dict["series_navigation"] = []
@@ -64,10 +73,20 @@ def _add_series_member_navigation(dataset_dict: dict) -> dict:
     return dataset_dict
 
 
-def _get_series_prev_and_next(series_id, order_field, current_value):
+def _get_series_prev_and_next(series_id, order_field, current_value, is_date=False):
 
     prev = None
     next_ = None
+
+    if is_date:
+        try:
+            date = parse_date(current_value)
+            current_value = date.isoformat()
+            if not date.tzinfo:
+                current_value += "Z"
+        except DateParserError:
+            log.warning(f"Wrong date value for series navigation: {current_value}")
+            return None, None
 
     prev_result = toolkit.get_action("package_search")(
         {},

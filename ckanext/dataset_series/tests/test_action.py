@@ -177,3 +177,44 @@ def test_series_only_dataset():
 
     assert dataset_dict["series_navigation"][0]["previous"] is None
     assert dataset_dict["series_navigation"][0]["next"] is None
+
+
+@pytest.mark.usefixtures("with_plugins", "clean_db")
+@pytest.mark.ckan_config("ckan.plugins", "dataset_series scheming_datasets")
+@pytest.mark.ckan_config(
+    "scheming.dataset_schemas",
+    "ckanext.dataset_series.schemas:dataset_series.yaml "
+    "ckanext.dataset_series.schemas:dataset_in_series.yaml",
+)
+def test_series_date_field():
+
+    dataset_series = factories.Dataset(
+        type="dataset-series",
+        series_order_field="metadata_created",
+        series_order_type="date",
+    )
+
+    dataset1 = factories.Dataset(
+        name="test-series-member-1", in_series=dataset_series["id"]
+    )
+    dataset2 = factories.Dataset(
+        name="test-series-member-2", in_series=dataset_series["id"]
+    )
+    dataset3 = factories.Dataset(
+        name="test-series-member-3", in_series=dataset_series["id"]
+    )
+
+    dataset_dict = call_action("package_show", id=dataset1["id"])
+
+    assert dataset_dict["series_navigation"][0]["previous"] is None
+    assert dataset_dict["series_navigation"][0]["next"]["id"] == dataset2["id"]
+
+    dataset_dict = call_action("package_show", id=dataset2["id"])
+
+    assert dataset_dict["series_navigation"][0]["previous"]["id"] == dataset1["id"]
+    assert dataset_dict["series_navigation"][0]["next"]["id"] == dataset3["id"]
+
+    dataset_dict = call_action("package_show", id=dataset3["id"])
+
+    assert dataset_dict["series_navigation"][0]["previous"]["id"] == dataset2["id"]
+    assert dataset_dict["series_navigation"][0]["next"] is None
