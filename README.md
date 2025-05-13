@@ -163,7 +163,7 @@ To install ckanext-dataset-series:
 
 2. Clone the source and install it on the virtualenv
    ```sh
-   git clone https://github.com//ckanext-dataset-series.git
+   git clone https://github.com/ckan/ckanext-dataset-series.git
    cd ckanext-dataset-series
    pip install -e .
    pip install -r requirements.txt
