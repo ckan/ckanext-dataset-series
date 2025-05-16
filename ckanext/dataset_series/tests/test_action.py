@@ -43,7 +43,7 @@ def test_series_navigation(series_fixtures):
 
     assert series_dict["series_navigation"]["count"] == 3
 
-    fields = ("id", "name", "title")
+    fields = ("id", "name", "title", "type")
     for item, dataset in [("first", "dataset1"), ("last", "dataset3")]:
         for field in fields:
             assert (

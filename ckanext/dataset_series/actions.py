@@ -1,86 +1,117 @@
 import logging
-
+from typing import Any
 from dateutil.parser import parse as parse_date, ParserError as DateParserError
 
 import ckan.plugins.toolkit as toolkit
-
+import ckan.types as types
+from ckan.lib.search import SearchError
 
 log = logging.getLogger(__name__)
 
 
 @toolkit.side_effect_free
 @toolkit.chained_action
-def package_show(up_func, context, data_dict):
+def package_show(
+    up_func: types.Action, context: types.Context, data_dict: types.DataDict
+) -> types.DataDict:
 
     dataset_dict = up_func(context, data_dict)
 
-    for_indexing = toolkit.asbool(data_dict.get("for_indexing")) or toolkit.asbool(
-        context.get("use_cache") is False
+    for_indexing = (
+        toolkit.asbool(data_dict.get("for_indexing"))
+        or context.get("use_cache") is False
     )
 
-    if not for_indexing:
-        if dataset_dict.get("type") == "dataset_series":
-            dataset_dict = _add_series_navigation(dataset_dict)
+    if for_indexing or context.get("for_update", False):
+        return dataset_dict
 
-        elif dataset_dict.get("in_series"):
-            dataset_dict = _add_series_member_navigation(dataset_dict)
+    if dataset_dict.get("type") == "dataset_series":
+        _add_series_navigation(dataset_dict)
+
+    elif dataset_dict.get("in_series"):
+        _add_series_member_navigation(dataset_dict)
 
     return dataset_dict
 
 
-def _add_series_member_navigation(dataset_dict: dict) -> dict:
+def _add_series_member_navigation(dataset_dict: dict[str, Any]) -> None:
+    """Add series navigation to the dataset dictionary.
 
+    Args:
+        dataset_dict (dict[str, Any]): The dataset dictionary to add series navigation to.
+
+    Returns:
+        The dataset dictionary with series navigation added.
+    """
     for series_id in dataset_dict["in_series"]:
-        # Is the series ordered?
-        try:
-            series_dict = toolkit.get_action("package_show")(
-                {"ignore_auth": True}, {"id": series_id}
-            )
+        series_navigation = _add_single_series_navigation(series_id, dataset_dict)
 
-            if series_dict.get("series_order_field"):
-
-                is_date = series_dict.get("series_order_type", "").lower() == "date"
-                prev, next_ = _get_series_prev_and_next(
-                    series_id,
-                    series_dict["series_order_field"],
-                    dataset_dict[series_dict["series_order_field"]],
-                    is_date=is_date,
-                )
-                if "series_navigation" not in dataset_dict:
-                    dataset_dict["series_navigation"] = []
-                    series_nav = {
-                        "id": series_id,
-                        "name": series_dict["name"],
-                        "title": series_dict["title"],
-                        "previous": None,
-                        "next": None,
-                    }
-                    if prev:
-                        series_nav["previous"] = {
-                            "id": prev["id"],
-                            "name": prev["name"],
-                            "title": prev["title"],
-                        }
-                    if next_:
-                        series_nav["next"] = {
-                            "id": next_["id"],
-                            "name": next_["name"],
-                            "title": next_["title"],
-                        }
-                dataset_dict["series_navigation"].append(series_nav)
-
-        except (toolkit.ObjectNotFound, toolkit.NotAuthorized):
-            continue
-
-    return dataset_dict
+        if series_navigation:
+            dataset_dict["series_navigation"].append(series_navigation)
 
 
-def _get_series_prev_and_next(series_id, order_field, current_value, is_date=False):
+def _add_single_series_navigation(
+    series_id: str, dataset_dict: dict[str, Any]
+) -> dict[str, Any] | None:
+    try:
+        series_dict = toolkit.get_action("package_show")(
+            {"ignore_auth": True}, {"id": series_id}
+        )
+    except (toolkit.ObjectNotFound, toolkit.NotAuthorized):
+        return None
+
+    dataset_dict.setdefault("series_navigation", [])
+
+    series_navigation = {
+        "id": series_id,
+        "name": series_dict["name"],
+        "title": series_dict["title"],
+    }
+
+    if not series_dict.get("series_order_field"):
+        return series_navigation
+
+    try:
+        prev, next_ = _get_series_prev_and_next(
+            series_id,
+            series_dict["series_order_field"],
+            dataset_dict.get(series_dict["series_order_field"]) or "*",
+            is_date=series_dict.get("series_order_type", "").lower() == "date",
+        )
+    except SearchError:
+        return series_navigation
+
+    series_navigation["previous"] = _build_navigation_item(prev) if prev else None
+    series_navigation["next"] = _build_navigation_item(next_) if next_ else None
+
+    return series_navigation
+
+
+def _build_navigation_item(package_dict: dict[str, Any]) -> dict[str, Any]:
+    """Build a navigation item for a package.
+
+    Args:
+        package_dict: The package dictionary to build a navigation item for.
+
+    Returns:
+        The navigation item for the package.
+    """
+    return {
+        "id": package_dict["id"],
+        "name": package_dict["name"],
+        "title": package_dict["title"],
+        "type": package_dict["type"],
+    }
+
+
+def _get_series_prev_and_next(
+    series_id: str, order_field: str, current_value: Any, is_date: bool = False
+) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
 
     prev = None
     next_ = None
 
-    if is_date:
+    if is_date and current_value != "*":
         try:
             date = parse_date(current_value)
             current_value = date.isoformat()
@@ -100,6 +131,7 @@ def _get_series_prev_and_next(series_id, order_field, current_value, is_date=Fal
             "sort": f"{order_field} desc",
             "start": 1,
             "rows": 1,
+            "include_private": True,
         },
     )
     if prev_result["results"]:
@@ -115,6 +147,7 @@ def _get_series_prev_and_next(series_id, order_field, current_value, is_date=Fal
             "sort": f"{order_field} asc",
             "start": 1,
             "rows": 1,
+            "include_private": True,
         },
     )
     if next_result["results"]:
@@ -123,11 +156,9 @@ def _get_series_prev_and_next(series_id, order_field, current_value, is_date=Fal
     return prev, next_
 
 
-def _add_series_navigation(series_dict: dict) -> dict:
-
-    # Is the Dataset Series ordered?
+def _add_series_navigation(series_dict: dict[str, Any]) -> None:
     if not series_dict.get("series_order_field"):
-        return series_dict
+        return
 
     first, last, count = _get_series_first_last_and_count(
         series_dict["id"], series_dict["series_order_field"]
@@ -135,29 +166,17 @@ def _add_series_navigation(series_dict: dict) -> dict:
 
     series_dict["series_navigation"] = {
         "count": count,
-        "first": None,
-        "last": None,
+        "first": _build_navigation_item(first) if first else None,
+        "last": _build_navigation_item(last) if last else None,
     }
-    if first:
-        series_dict["series_navigation"]["first"] = {
-            "id": first["id"],
-            "name": first["name"],
-            "title": first["title"],
-        }
-    if last:
-        series_dict["series_navigation"]["last"] = {
-            "id": last["id"],
-            "name": last["name"],
-            "title": last["title"],
-        }
-
-    return series_dict
 
 
-def _get_series_first_last_and_count(series_id, order_field):
+def _get_series_first_last_and_count(
+    series_id: str, order_field: str
+) -> tuple[dict[str, Any] | None, dict[str, Any] | None, int]:
     search_params = {"fq": f"vocab_in_series:{series_id}", "rows": 1}
     first_result = toolkit.get_action("package_search")(
-        {}, dict(search_params, sort=f"{order_field} asc")
+        {}, dict(search_params, sort=f"{order_field} asc", include_private=True)
     )
 
     if not first_result["results"]:
@@ -167,6 +186,11 @@ def _get_series_first_last_and_count(series_id, order_field):
         return first_result["results"][0], first_result["results"][0], 1
 
     last_result = toolkit.get_action("package_search")(
-        {}, dict(search_params, sort=f"{order_field} desc")
+        {}, dict(search_params, sort=f"{order_field} desc", include_private=True)
     )
-    return first_result["results"][0], last_result["results"][0], last_result["count"]
+
+    return (
+        first_result["results"][0],
+        last_result["results"][0],
+        last_result["count"],
+    )
