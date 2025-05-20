@@ -21,7 +21,7 @@ presets:
       label: Series Order
       form_snippet: select.html
       display_snippet: select.html
-      validators: scheming_choices
+      validators: ignore_missing scheming_choices
       choices_helper: series_order_choices
 
 
@@ -30,7 +30,7 @@ presets:
       label: Series Order Type
       form_snippet: select.html
       display_snippet: select.html
-      validators: scheming_choices
+      validators: ignore_missing scheming_choices
       form_include_blank_choice: true
       choices:
         - value: 'text'

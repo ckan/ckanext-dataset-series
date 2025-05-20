@@ -33,6 +33,10 @@ def series_fixtures():
     "ckanext.dataset_series.schemas:dataset_series.yaml "
     "ckanext.dataset_series.schemas:dataset_in_series.yaml",
 )
+@pytest.mark.ckan_config(
+    "scheming.presets",
+    "ckanext.scheming:presets.json ckanext.dataset_series.schemas:presets.yaml",
+)
 def test_series_navigation(series_fixtures):
 
     series_dict = call_action(
@@ -59,6 +63,10 @@ def test_series_navigation(series_fixtures):
     "ckanext.dataset_series.schemas:dataset_series.yaml "
     "ckanext.dataset_series.schemas:dataset_in_series.yaml",
 )
+@pytest.mark.ckan_config(
+    "scheming.presets",
+    "ckanext.scheming:presets.json ckanext.dataset_series.schemas:presets.yaml",
+)
 def test_empty_series_navigation(series_fixtures):
 
     dataset_series = factories.Dataset(type="dataset_series", series_order_field="name")
@@ -76,6 +84,10 @@ def test_empty_series_navigation(series_fixtures):
     "scheming.dataset_schemas",
     "ckanext.dataset_series.schemas:dataset_series.yaml "
     "ckanext.dataset_series.schemas:dataset_in_series.yaml",
+)
+@pytest.mark.ckan_config(
+    "scheming.presets",
+    "ckanext.scheming:presets.json ckanext.dataset_series.schemas:presets.yaml",
 )
 def test_series_first_dataset(series_fixtures):
 
@@ -103,6 +115,10 @@ def test_series_first_dataset(series_fixtures):
     "scheming.dataset_schemas",
     "ckanext.dataset_series.schemas:dataset_series.yaml "
     "ckanext.dataset_series.schemas:dataset_in_series.yaml",
+)
+@pytest.mark.ckan_config(
+    "scheming.presets",
+    "ckanext.scheming:presets.json ckanext.dataset_series.schemas:presets.yaml",
 )
 def test_series_middle_dataset(series_fixtures):
 
@@ -134,6 +150,10 @@ def test_series_middle_dataset(series_fixtures):
     "ckanext.dataset_series.schemas:dataset_series.yaml "
     "ckanext.dataset_series.schemas:dataset_in_series.yaml",
 )
+@pytest.mark.ckan_config(
+    "scheming.presets",
+    "ckanext.scheming:presets.json ckanext.dataset_series.schemas:presets.yaml",
+)
 def test_series_last_dataset(series_fixtures):
 
     dataset_dict = call_action("package_show", id=series_fixtures["dataset3"]["id"])
@@ -161,6 +181,10 @@ def test_series_last_dataset(series_fixtures):
     "ckanext.dataset_series.schemas:dataset_series.yaml "
     "ckanext.dataset_series.schemas:dataset_in_series.yaml",
 )
+@pytest.mark.ckan_config(
+    "scheming.presets",
+    "ckanext.scheming:presets.json ckanext.dataset_series.schemas:presets.yaml",
+)
 def test_series_only_dataset():
 
     dataset_series = factories.Dataset(type="dataset_series", series_order_field="name")
@@ -185,6 +209,10 @@ def test_series_only_dataset():
     "scheming.dataset_schemas",
     "ckanext.dataset_series.schemas:dataset_series.yaml "
     "ckanext.dataset_series.schemas:dataset_in_series.yaml",
+)
+@pytest.mark.ckan_config(
+    "scheming.presets",
+    "ckanext.scheming:presets.json ckanext.dataset_series.schemas:presets.yaml",
 )
 def test_series_date_field():
 

@@ -36,9 +36,9 @@ def in_series_choices(field: dict[str, Any]) -> list[dict[str, str]]:
         A list of options for the in_series field.
     """
     result = tk.get_action("package_search")(
-        {"user": tk.current_user.name},
+        {"ignore_auth": True},
         {
-            "q": f"type:dataset_series",
+            "q": "type:dataset_series",
             "rows": 1000,
             "fl": "title, id",
             "include_private": True,
@@ -60,7 +60,14 @@ def series_order_choices(field: dict[str, Any]) -> list[dict[str, str]]:
     Returns:
         A list of options for the series_order field.
     """
-    if "scheming_datasets" in tk.g.plugins:
+
+    try:
+        tk.get_action("scheming_dataset_schema_show")
+        scheming_loaded = True
+    except KeyError:
+        scheming_loaded = False
+
+    if scheming_loaded:
         return _get_order_fields_from_scheming()
 
     return _get_order_fields_from_package_search()
