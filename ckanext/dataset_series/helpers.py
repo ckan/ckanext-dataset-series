@@ -1,6 +1,7 @@
 from typing import Any, Callable
 
 import ckan.plugins.toolkit as tk
+current_user = tk.current_user
 
 
 EXCLUDE_FROM_ORDER = (
@@ -44,11 +45,25 @@ def in_series_choices(field: dict[str, Any]) -> list[dict[str, str]]:
             "include_private": True,
         },
     )
+    # Filter series that the current user can not edit
+    series = []
+    try:
+        user_name = current_user.name
+    except AttributeError:
+        # Outside of a web request (e.g. tests)
+        user_name = None
 
-    return [
-        {"value": package["id"], "label": package["title"]}
-        for package in sorted(result["results"], key=lambda p: p["title"])
-    ]
+    for dataset in result["results"]:
+        if user_name:
+            try:
+                tk.check_access(
+                    "package_update", {"user": user_name}, {"id": dataset["id"]}
+                )
+            except tk.NotAuthorized:
+                continue
+        series.append({"value": dataset["id"], "label": dataset["title"]})
+
+    return sorted(series, key=lambda d: d["label"])
 
 
 def series_order_choices(field: dict[str, Any]) -> list[dict[str, str]]:
