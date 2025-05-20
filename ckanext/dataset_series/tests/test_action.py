@@ -1,7 +1,7 @@
 import pytest
 
 from ckan.tests import factories
-from ckan.tests.helpers import call_action, reset_db
+from ckan.tests.helpers import call_action
 
 
 @pytest.fixture
@@ -33,6 +33,10 @@ def series_fixtures():
     "ckanext.dataset_series.schemas:dataset_series.yaml "
     "ckanext.dataset_series.schemas:dataset_in_series.yaml",
 )
+@pytest.mark.ckan_config(
+    "scheming.presets",
+    "ckanext.scheming:presets.json ckanext.dataset_series.schemas:presets.yaml",
+)
 def test_series_navigation(series_fixtures):
 
     series_dict = call_action(
@@ -43,7 +47,7 @@ def test_series_navigation(series_fixtures):
 
     assert series_dict["series_navigation"]["count"] == 3
 
-    fields = ("id", "name", "title")
+    fields = ("id", "name", "title", "type")
     for item, dataset in [("first", "dataset1"), ("last", "dataset3")]:
         for field in fields:
             assert (
@@ -58,6 +62,10 @@ def test_series_navigation(series_fixtures):
     "scheming.dataset_schemas",
     "ckanext.dataset_series.schemas:dataset_series.yaml "
     "ckanext.dataset_series.schemas:dataset_in_series.yaml",
+)
+@pytest.mark.ckan_config(
+    "scheming.presets",
+    "ckanext.scheming:presets.json ckanext.dataset_series.schemas:presets.yaml",
 )
 def test_empty_series_navigation(series_fixtures):
 
@@ -77,13 +85,17 @@ def test_empty_series_navigation(series_fixtures):
     "ckanext.dataset_series.schemas:dataset_series.yaml "
     "ckanext.dataset_series.schemas:dataset_in_series.yaml",
 )
+@pytest.mark.ckan_config(
+    "scheming.presets",
+    "ckanext.scheming:presets.json ckanext.dataset_series.schemas:presets.yaml",
+)
 def test_series_first_dataset(series_fixtures):
 
     dataset_dict = call_action("package_show", id=series_fixtures["dataset1"]["id"])
 
     assert len(dataset_dict["series_navigation"]) == 1
 
-    for field in ("id", "name", "title"):
+    for field in ("id", "name", "title", "type"):
         assert (
             dataset_dict["series_navigation"][0][field]
             == series_fixtures["dataset_series"][field]
@@ -104,13 +116,17 @@ def test_series_first_dataset(series_fixtures):
     "ckanext.dataset_series.schemas:dataset_series.yaml "
     "ckanext.dataset_series.schemas:dataset_in_series.yaml",
 )
+@pytest.mark.ckan_config(
+    "scheming.presets",
+    "ckanext.scheming:presets.json ckanext.dataset_series.schemas:presets.yaml",
+)
 def test_series_middle_dataset(series_fixtures):
 
     dataset_dict = call_action("package_show", id=series_fixtures["dataset2"]["id"])
 
     assert len(dataset_dict["series_navigation"]) == 1
 
-    for field in ("id", "name", "title"):
+    for field in ("id", "name", "title", "type"):
         assert (
             dataset_dict["series_navigation"][0][field]
             == series_fixtures["dataset_series"][field]
@@ -134,13 +150,17 @@ def test_series_middle_dataset(series_fixtures):
     "ckanext.dataset_series.schemas:dataset_series.yaml "
     "ckanext.dataset_series.schemas:dataset_in_series.yaml",
 )
+@pytest.mark.ckan_config(
+    "scheming.presets",
+    "ckanext.scheming:presets.json ckanext.dataset_series.schemas:presets.yaml",
+)
 def test_series_last_dataset(series_fixtures):
 
     dataset_dict = call_action("package_show", id=series_fixtures["dataset3"]["id"])
 
     assert len(dataset_dict["series_navigation"]) == 1
 
-    for field in ("id", "name", "title"):
+    for field in ("id", "name", "title", "type"):
         assert (
             dataset_dict["series_navigation"][0][field]
             == series_fixtures["dataset_series"][field]
@@ -160,6 +180,10 @@ def test_series_last_dataset(series_fixtures):
     "scheming.dataset_schemas",
     "ckanext.dataset_series.schemas:dataset_series.yaml "
     "ckanext.dataset_series.schemas:dataset_in_series.yaml",
+)
+@pytest.mark.ckan_config(
+    "scheming.presets",
+    "ckanext.scheming:presets.json ckanext.dataset_series.schemas:presets.yaml",
 )
 def test_series_only_dataset():
 
@@ -185,6 +209,10 @@ def test_series_only_dataset():
     "scheming.dataset_schemas",
     "ckanext.dataset_series.schemas:dataset_series.yaml "
     "ckanext.dataset_series.schemas:dataset_in_series.yaml",
+)
+@pytest.mark.ckan_config(
+    "scheming.presets",
+    "ckanext.scheming:presets.json ckanext.dataset_series.schemas:presets.yaml",
 )
 def test_series_date_field():
 

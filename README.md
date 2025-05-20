@@ -2,7 +2,7 @@
 
 # ckanext-dataset-series
 
-> [!WARNING]  
+> [!WARNING]
 > This is extension is a work in progress and may change at any point. Use with caution.
 
 A fast and simple implementation of Dataset Series.
@@ -23,7 +23,7 @@ Dataset Series can be ordered or unordered.
 This extension uses a custom dataset type (`dataset_series`) to define the parent series entities. These are
 just datasets and can have any of the standard dataset fields defined.
 
-If the series is ordered, the only mandatory fields they need 
+If the series is ordered, the only mandatory fields they need
 are the following (shown in the [ckanext-scheming](https://github.com/ckan/ckanext-scheming) schema file definition):
 
 ```yaml
@@ -36,12 +36,11 @@ dataset_fields:
 
 # Series fields
 
-# Empty for un-ordered series
 - field_name: series_order_field
-  label: Series order field
+  preset: dataset_series_order
 
 - field_name: series_order_type
-  label: Series order type
+  preset: dataset_series_order_type
 ```
 
 At the dataset level, the series membership is defined with the `in_series` field. Datasets can belong to multiple series:
@@ -57,25 +56,27 @@ dataset_fields:
 # Series fields
 
 - field_name: in_series
-  label: In Series
-  preset: multiple_text
+  preset: dataset_series_in_series
 ```
 
 Once these are in place, datasets can be assigned to a series by setting the `in_series` field via the API or the UI form.
+
+> [!NOTE]
+> Only users that can update the Dataset Series dataset can add dataset members to it
 
 ## API
 
 If a dataset belongs to a series, a new `series_navigation` key is added to the response of the `package_show` action, showing details of the series it belongs to:
 
 ```json
-{ 
+{
    "name": "test-dataset-in-series",
    "type": "dataset",
    "series_navigation": [
       {
           "id": "20f41df2-0b50-4b6b-9a75-44eb39411dca",
           "name": "test-dataset-series",
-          "title": "Test Dataset series"
+          "title": "Test Dataset series",
       }
   ]
 }
@@ -84,7 +85,7 @@ If a dataset belongs to a series, a new `series_navigation` key is added to the 
 If that series is ordered, it will include links to the previous and next dataset on the series (or `None` if they don't exist):
 
 ```json
-{ 
+{
    "name": "test-series-member-2",
    "type": "dataset",
    "series_navigation": [
@@ -96,11 +97,13 @@ If that series is ordered, it will include links to the previous and next datase
               "id": "ce8fb09a-f285-4ba8-952e-46dbde08c509",
               "name": "test-series-member-3",
               "title": "Test series member 3"
+              "type": "dataset"
           },
           "previous": {
               "id": "826bd499-40e5-4d92-bfa1-f777775f0d76",
               "name": "test-series-member-1",
-              "title": "Test series member 1"
+              "title": "Test series member 1",
+              "type": "dataset"
           }
       }
   ]
@@ -115,15 +118,18 @@ Querying the series dataset will also return a `series_navigation` link if order
    "name": "test-dataset-series",
    "type": "dataset_series",
    "series_navigation": {
+      "count": 4,
  	  "first": {
  		  "id": "826bd499-40e5-4d92-bfa1-f777775f0d76",
  		  "name": "test-series-member-1",
- 		  "title": "Test series member 1"
+ 		  "title": "Test series member 1",
+          "type": "dataset"
  	  },
  	  "last": {
  		  "id": "ce8fb09a-f285-4ba8-952e-46dbde08c509",
  		  "name": "test-series-member-3",
- 		  "title": "Test series member 3"
+ 		  "title": "Test series member 3",
+          "type": "dataset"
  	  }
    }
 }
@@ -132,11 +138,25 @@ Querying the series dataset will also return a `series_navigation` link if order
 
 ## UI
 
+The extension includes a `series_navigation.html` snippet that adds a series navigation to the dataset page, with links to the previous and next datasets in the series. The snippet is left deliberately unstyled so sites can tweak it to fit their own design.
+
+For example, you can adjust your `package/read.html` template to include the snippet in the following way:
+
+```Jinja
+{% ckan_extends %}
+
+{% block package_description %}
+    {% snippet "package/snippets/series_navigation.html", package=pkg %}
+
+    {{ super() }}
+{% endblock %}
+```
+> [!NOTE]
+> The snippet only works with the first series a dataset belongs to. You can adjust it to show the navigation for other series if needed
+
 > [!NOTE]
 > TODO
 
-* Form snippet for `in_series` displaying available dataset series
-* Series navigation in dataset member pages linking to next and previous datasets
 * Series page showing a navigation of the member datasets
 
 ## Requirements

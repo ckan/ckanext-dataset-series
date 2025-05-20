@@ -73,9 +73,7 @@ dataset_fields:
 # Series fields
 
 - field_name: in_series
-  label: In Series
-  preset: multiple_text
-  # TODO: snippet
+  preset: dataset_series_in_series
 
 resource_fields:
 

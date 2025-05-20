@@ -75,12 +75,11 @@ dataset_fields:
 # Empty for un-ordered series
 - field_name: series_order_field
   label: Series order field
- #validators: admin_only # ?
+  preset: dataset_series_order
 
 - field_name: series_order_type
   label: Series order type
- # validators: admin_only # ?
-
+  preset: dataset_series_order_type
 
 
 

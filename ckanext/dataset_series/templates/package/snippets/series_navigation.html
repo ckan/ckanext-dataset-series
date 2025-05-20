@@ -1,0 +1,38 @@
+{#
+    This snippet is used to display the series navigation for a dataset.
+
+    Currently, we expect that the dataset will be a part of only one series.
+    If you want to support multiple series, you can adjust the snippet.
+
+    It will only be displayed if there is a previous or next dataset in the series.
+#}
+
+{% if package.series_navigation %}
+    {% set series_nav = package.series_navigation[0] %}
+
+    {% if series_nav and (series_nav.previous or series_nav.next) %}
+        <div class="series-navigation d-flex justify-content-between mb-2">
+            <div class="series-navigation-previous">
+                {% if series_nav.previous %}
+                    <a href="{{ h.url_for(series_nav.previous.type ~ '.read', id=series_nav.previous.name) }}">
+                        {{ _('Previous') }}
+                    </a>
+                {% endif %}
+            </div>
+
+            <div>This dataset belongs to the dataset series:
+              <a href="{{h.url_for(series_nav.type ~ '.read', id=series_nav.name) }}">
+                {{ series_nav.title }}
+              </a>
+            </div>
+
+            <div class="series-navigation-next">
+                {% if series_nav.next %}
+                    <a href="{{ h.url_for(series_nav.next.type ~ '.read', id=series_nav.next.name) }}">
+                        {{ _('Next') }}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+{% endif %}
