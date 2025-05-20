@@ -135,7 +135,9 @@ Querying the series dataset will also return a `series_navigation` link if order
 
 ## UI
 
-Use the `series_navigation.html` snippet to add a series navigation to the dataset page. For example, adjust your `package/read.html` template to include the snippet:
+The extension includes a `series_navigation.html` snippet that adds a series navigation to the dataset page, with links to the previous and next datasets in the series. The snippet is left deliberately unstyled so sites can tweak it to fit their own design.
+
+For example, you can adjust your `package/read.html` template to include the snippet in the following way:
 
 ```Jinja
 {% ckan_extends %}
@@ -146,9 +148,8 @@ Use the `series_navigation.html` snippet to add a series navigation to the datas
     {{ super() }}
 {% endblock %}
 ```
-
-This snippet shows navigation links to the previous and next datasets in the series and works only with the first series.
-You can adjust the snippet to show the navigation for other series as well.
+> [!NOTE]
+> The snippet only works with the first series a dataset belongs to. You can adjust it to show the navigation for other series if needed
 
 > [!NOTE]
 > TODO

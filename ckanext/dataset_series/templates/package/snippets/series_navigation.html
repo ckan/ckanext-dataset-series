@@ -11,7 +11,7 @@
     {% set series_nav = package.series_navigation[0] %}
 
     {% if series_nav and (series_nav.previous or series_nav.next) %}
-        <div class="series-navigation d-flex justify-content-between mb-2 fw-bold fs-4">
+        <div class="series-navigation d-flex justify-content-between mb-2">
             <div class="series-navigation-previous">
                 {% if series_nav.previous %}
                     <a href="{{ h.url_for(series_nav.previous.type ~ '.read', id=series_nav.previous.name) }}">
