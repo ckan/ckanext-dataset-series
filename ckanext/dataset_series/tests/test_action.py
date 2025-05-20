@@ -95,7 +95,7 @@ def test_series_first_dataset(series_fixtures):
 
     assert len(dataset_dict["series_navigation"]) == 1
 
-    for field in ("id", "name", "title"):
+    for field in ("id", "name", "title", "type"):
         assert (
             dataset_dict["series_navigation"][0][field]
             == series_fixtures["dataset_series"][field]
@@ -126,7 +126,7 @@ def test_series_middle_dataset(series_fixtures):
 
     assert len(dataset_dict["series_navigation"]) == 1
 
-    for field in ("id", "name", "title"):
+    for field in ("id", "name", "title", "type"):
         assert (
             dataset_dict["series_navigation"][0][field]
             == series_fixtures["dataset_series"][field]
@@ -160,7 +160,7 @@ def test_series_last_dataset(series_fixtures):
 
     assert len(dataset_dict["series_navigation"]) == 1
 
-    for field in ("id", "name", "title"):
+    for field in ("id", "name", "title", "type"):
         assert (
             dataset_dict["series_navigation"][0][field]
             == series_fixtures["dataset_series"][field]

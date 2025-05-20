@@ -20,6 +20,12 @@
                 {% endif %}
             </div>
 
+            <div>This dataset belongs to the dataset series:
+              <a href="{{h.url_for(series_nav.type ~ '.read', id=series_nav.name) }}">
+                {{ series_nav.title }}
+              </a>
+            </div>
+
             <div class="series-navigation-next">
                 {% if series_nav.next %}
                     <a href="{{ h.url_for(series_nav.next.type ~ '.read', id=series_nav.next.name) }}">

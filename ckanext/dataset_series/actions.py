@@ -65,6 +65,7 @@ def _add_single_series_navigation(
         "id": series_id,
         "name": series_dict["name"],
         "title": series_dict["title"],
+        "type": series_dict["type"],
     }
 
     if not series_dict.get("series_order_field"):
