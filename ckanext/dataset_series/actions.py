@@ -1,5 +1,5 @@
 import logging
-from typing import Any
+from typing import Any, Optional, Union, Tuple
 from dateutil.parser import parse as parse_date, ParserError as DateParserError
 
 import ckan.plugins.toolkit as toolkit
@@ -7,7 +7,6 @@ import ckan.types as types
 from ckan.lib.search import SearchError
 
 log = logging.getLogger(__name__)
-
 
 @toolkit.side_effect_free
 @toolkit.chained_action
@@ -52,7 +51,7 @@ def _add_series_member_navigation(dataset_dict: dict[str, Any]) -> None:
 
 def _add_single_series_navigation(
     series_id: str, dataset_dict: dict[str, Any]
-) -> dict[str, Any] | None:
+) -> Optional[dict[str, Any]]:
     try:
         series_dict = toolkit.get_action("package_show")(
             {"ignore_auth": True}, {"id": series_id}
@@ -106,7 +105,7 @@ def _build_navigation_item(package_dict: dict[str, Any]) -> dict[str, Any]:
 
 def _get_series_prev_and_next(
     series_id: str, order_field: str, current_value: Any, is_date: bool = False
-) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+) -> Tuple[Optional[dict[str, Any]], Optional[dict[str, Any]]]:
 
     prev = None
     next_ = None
@@ -173,7 +172,7 @@ def _add_series_navigation(series_dict: dict[str, Any]) -> None:
 
 def _get_series_first_last_and_count(
     series_id: str, order_field: str
-) -> tuple[dict[str, Any] | None, dict[str, Any] | None, int]:
+) -> Tuple[Optional[dict[str, Any]], Optional[dict[str, Any]], int]:
     search_params = {"fq": f"vocab_in_series:{series_id}", "rows": 1}
     first_result = toolkit.get_action("package_search")(
         {}, dict(search_params, sort=f"{order_field} asc", include_private=True)
