@@ -61,6 +61,9 @@ dataset_fields:
 
 Once these are in place, datasets can be assigned to a series by setting the `in_series` field via the API or the UI form.
 
+> [!NOTE]
+> Only users that can update the Dataset Series dataset can add dataset members to it
+
 ## API
 
 If a dataset belongs to a series, a new `series_navigation` key is added to the response of the `package_show` action, showing details of the series it belongs to:

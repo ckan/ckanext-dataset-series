@@ -5,6 +5,7 @@ import ckan.plugins.toolkit as toolkit
 
 from ckanext.dataset_series.actions import package_show
 from ckanext.dataset_series.helpers import get_helpers
+from ckanext.dataset_series.validators import get_validators
 
 
 class DatasetSeriesPlugin(p.SingletonPlugin):
@@ -12,6 +13,7 @@ class DatasetSeriesPlugin(p.SingletonPlugin):
     p.implements(p.IActions)
     p.implements(p.IPackageController, inherit=True)
     p.implements(p.ITemplateHelpers)
+    p.implements(p.IValidators)
 
     # IConfigurer
 
@@ -40,3 +42,7 @@ class DatasetSeriesPlugin(p.SingletonPlugin):
     # ITemplateHelpers
     def get_helpers(self):
         return get_helpers()
+
+    # IValidators
+    def get_validators(self):
+        return get_validators()

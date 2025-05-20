@@ -1,7 +1,7 @@
 import pytest
 
 from ckan.tests import factories
-from ckan.tests.helpers import call_action, reset_db
+from ckan.tests.helpers import call_action
 
 
 @pytest.fixture
