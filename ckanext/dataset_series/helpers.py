@@ -47,7 +47,7 @@ def in_series_choices(field: dict[str, Any]) -> list[dict[str, str]]:
 
     return [
         {"value": package["id"], "label": package["title"]}
-        for package in result["results"]
+        for package in sorted(result["results"], key=lambda p: p["title"])
     ]
 
 
