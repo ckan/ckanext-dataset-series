@@ -2,9 +2,6 @@
 
 # ckanext-dataset-series
 
-> [!WARNING]
-> This is extension is a work in progress and may change at any point. Use with caution.
-
 A fast and simple implementation of Dataset Series.
 
 Dataset Series are loosely defined as collections of datasets that share some common characteristics.

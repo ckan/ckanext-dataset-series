@@ -1,6 +1,6 @@
 [project]
 name = "ckanext-dataset-series"
-version = "0.1.0"
+version = "0.1.1"
 description = "A fast and simple dataset series implementation for CKAN"
 readme = "README.md"
 authors = [
