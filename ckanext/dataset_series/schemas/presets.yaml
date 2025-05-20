@@ -2,7 +2,7 @@ scheming_presets_version: 2
 about_url: http://github.com/ckan/ckanext-scheming#preset
 
 presets:
-  - preset_name: ds_in_series
+  - preset_name: dataset_series_in_series
     values:
       label: In Series
       form_snippet: multiple_select.html
@@ -16,7 +16,7 @@ presets:
         class: ~
 
 
-  - preset_name: ds_series_order
+  - preset_name: dataset_series_order
     values:
       label: Series Order
       form_snippet: select.html
@@ -25,7 +25,7 @@ presets:
       choices_helper: series_order_choices
 
 
-  - preset_name: ds_series_order_type
+  - preset_name: dataset_series_order_type
     values:
       label: Series Order Type
       form_snippet: select.html

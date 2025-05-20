@@ -37,10 +37,10 @@ dataset_fields:
 # Series fields
 
 - field_name: series_order_field
-  preset: ds_series_order
+  preset: dataset_series_order
 
 - field_name: series_order_type
-  preset: ds_series_order_type
+  preset: dataset_series_order_type
 ```
 
 At the dataset level, the series membership is defined with the `in_series` field. Datasets can belong to multiple series:
@@ -56,7 +56,7 @@ dataset_fields:
 # Series fields
 
 - field_name: in_series
-  preset: ds_in_series
+  preset: dataset_series_in_series
 ```
 
 Once these are in place, datasets can be assigned to a series by setting the `in_series` field via the API or the UI form.
