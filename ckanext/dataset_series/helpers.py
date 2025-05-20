@@ -10,11 +10,12 @@ EXCLUDE_FROM_ORDER = (
     "organization",
     "creator_user_id",
     "owner_org",
+    "in_series",
 )
 
 EXTRA_ORDER_FIELDS = {
-    "metadata_modified": "Metadata Modified",
-    "metadata_created": "Metadata Created",
+    "metadata_modified": tk._("Metadata Modified"),
+    "metadata_created": tk._("Metadata Created"),
 }
 
 
@@ -104,8 +105,8 @@ def _get_order_fields_from_scheming() -> list[dict[str, str]]:
             fields[field_name] = field
 
     return [
-        {"value": field["field_name"], "label": field["label"]}
-        for field in fields.values()
+        {"value": field["field_name"], "label": tk._(field["label"])}
+        for field in sorted(fields.values(), key=lambda f: f["label"])
     ]
 
 
