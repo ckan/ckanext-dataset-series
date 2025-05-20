@@ -21,7 +21,7 @@ presets:
       label: Series Order
       form_snippet: select.html
       display_snippet: select.html
-      validators: scheming_required scheming_choices
+      validators: scheming_choices
       choices_helper: series_order_choices
 
 
@@ -30,8 +30,8 @@ presets:
       label: Series Order Type
       form_snippet: select.html
       display_snippet: select.html
-      validators: scheming_required scheming_choices
-      required: true
+      validators: scheming_choices
+      form_include_blank_choice: true
       choices:
         - value: 'text'
           label: 'Text'
