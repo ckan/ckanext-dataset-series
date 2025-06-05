@@ -9,6 +9,7 @@ presets:
       display_snippet: multiple_choice.html
       validators: scheming_multiple_choice series_validator
       output_validators: scheming_multiple_choice_output
+      convert: convert_to_extras
       choices_helper: in_series_choices
       form_select_attrs:
         data-module: autocomplete
@@ -23,6 +24,7 @@ presets:
       display_snippet: select.html
       validators: ignore_missing scheming_choices
       choices_helper: series_order_choices
+      convert: convert_to_extras
 
 
   - preset_name: dataset_series_order_type
@@ -32,6 +34,7 @@ presets:
       display_snippet: select.html
       validators: ignore_missing scheming_choices
       form_include_blank_choice: true
+      convert: convert_to_extras
       choices:
         - value: 'text'
           label: 'Text'
